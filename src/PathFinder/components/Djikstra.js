@@ -61,3 +61,11 @@ const Dj = (props) => {
 };
 
 export default Dj;
+{
+  /* <button class="btn btn-primary" onClick={() => props.resetgrid()}>
+  <span class="glyphicon glyphicon-refresh"></span> Clear Grid
+      </button>
+  <button class="btn btn-primary" onClick={() => props.resetpath()}>
+    <span class="glyphicon glyphicon-refresh"></span> Reset Path
+      </button> */
+}

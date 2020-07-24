@@ -3,13 +3,14 @@ import Node from "./Node/Node";
 import "./PathFinder.css";
 import { djikstra, getNodesInShortestPathOrder } from "../algorithms/djikstra";
 import { bfs } from "../algorithms/bfs";
+import { as } from "../algorithms/as";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Home } from "./components/Home";
 import { Navigation } from "./components/Navigation";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Dj from "./components/Djikstra";
-import { AStar } from "./components/AStar";
+import AStar from "./components/AStar";
 import Bfs from "./components/Bfs";
 const SNrow = 10;
 const SNcol = 15;
@@ -27,12 +28,6 @@ class PathFinder extends Component {
     this.basestate = this.state;
     // this.visualizeDjikstra = this.visualizeDjikstra.bind(this);
   }
-  resetgrid = () => {
-    // this.setState(this.basestate);
-    // const grid = getInitialGRID();
-    // this.setState({ grid });
-    window.location.reload(false);
-  };
   //to interact with browser,easier if you use this instead of render
   componentDidMount() {
     const grid = getInitialGRID();
@@ -66,7 +61,7 @@ class PathFinder extends Component {
     }
   }
 
-  animateDjikstra(visnodesinorder, nodesInShortestPathOrder) {
+  animate(visnodesinorder = [], nodesInShortestPathOrder = []) {
     for (let i = 0; i <= visnodesinorder.length; i++) {
       //making a copy of the grid state
       if (i === visnodesinorder.length) {
@@ -83,33 +78,11 @@ class PathFinder extends Component {
         //   isVisited: true,
         // };
         // newgrid[current.r][current.c] = newNode;
-        document.getElementById(`node-${current.r}-${current.c}`).className =
-          "node nodevisited";
-        //updating state,leads to full rerendering
-        // this.setState({ grid: newgrid });
-      }, 10 * i);
-    }
-  }
-
-  animateBfs(visnodesinorder = [], nodesInShortestPath = []) {
-    for (let i = 0; i <= visnodesinorder.length; i++) {
-      //making a copy of the grid state
-      if (i === visnodesinorder.length) {
-        setTimeout(() => {
-          this.animateShortestpath(nodesInShortestPath);
-        }, 10 * i);
-        return;
-      }
-      setTimeout(() => {
-        const node = visnodesinorder[i];
-        // const newgrid = this.state.grid.slice();
-        // const newNode = {
-        //   ...current,
-        //   isVisited: true,
-        // };
-        if (!node.isStart && !node.isFinish && !node.isWall) {
-          document.getElementById(`node-${node.r}-${node.c}`).className =
+        if (!current.isStart && !current.isFinish && !current.isWall) {
+          document.getElementById(`node-${current.r}-${current.c}`).className =
             "node nodevisited";
+          //updating state,leads to full rerendering
+          // this.setState({ grid: newgrid });
         }
       }, 10 * i);
     }
@@ -124,7 +97,7 @@ class PathFinder extends Component {
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(finish);
     // console.log(visitedNodes);
     console.log(nodesInShortestPathOrder);
-    this.animateDjikstra(visitedNodes, nodesInShortestPathOrder);
+    this.animate(visitedNodes, nodesInShortestPathOrder);
   }
 
   visualizeBFS() {
@@ -138,7 +111,20 @@ class PathFinder extends Component {
     // const nodesInShortestPath = backtrace(finish);
     // console.log(visitedNodes);
     // console.log(nodesInShortestPath);
-    this.animateBfs(visitedNodes, nodesInShortestPath);
+    this.animate(visitedNodes, nodesInShortestPath);
+  }
+  visualizeAA() {
+    const { grid } = this.state;
+    const start = grid[SNrow][SNcol];
+    const finish = grid[FINrow][FINcol];
+    var visitedNodes = [],
+      nodesInShortestPath = [];
+    [visitedNodes, nodesInShortestPath] = as(grid, start, finish);
+    //backtracking from final node to get start node,tracing path
+    // const nodesInShortestPath = backtrace(finish);
+    // console.log(visitedNodes);
+    // console.log(nodesInShortestPath);
+    this.animate(visitedNodes, nodesInShortestPath);
   }
 
   render() {
@@ -160,6 +146,8 @@ class PathFinder extends Component {
               <Route
                 exact
                 path="/djikstra"
+                // resetgrid={this.resetgrid}
+                // resetpath={this.resetpath}
                 component={() => (
                   <Dj
                     func={() => {
@@ -179,11 +167,22 @@ class PathFinder extends Component {
                   />
                 )}
               />
-              <Route path="/aStar" component={AStar} exact />
+              {/* <Route
+                exact
+                path="/astar"
+                component={() => (
+                  <AStar
+                    func={() => {
+                      this.visualizeAA();
+                    }}
+                  />
+                )}
+              /> */}
+              {/* <Route path="/aStar" component={AStar} exact /> */}
             </Switch>
           </div>
         </BrowserRouter>
-        <button onClick={this.resetgrid}>Clear Grid</button>
+        {/* <button onClick={this.resetgrid()}>Clear Grid</button> */}
         <div className="griddd">
           {grid.map((row, rowidx) => {
             return (
