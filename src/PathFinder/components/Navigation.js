@@ -17,6 +17,10 @@ export class Navigation extends Component {
               Djikstra Algorithm
             </NavLink>
 
+            <NavLink className="d-inline p-2 bg-dark text-white" to="/bfs">
+              BreathFirst Search Algorithm
+            </NavLink>
+
             <NavLink className="d-inline p-2 bg-dark text-white" to="/aStar">
               A* Algorithm
             </NavLink>

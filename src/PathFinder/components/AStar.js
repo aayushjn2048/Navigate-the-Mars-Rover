@@ -7,7 +7,7 @@ export class AStar extends Component {
         <button
           type="button"
           class="btn btn-success"
-          onClick={() => this.visualizeDjikstra()}
+          onClick={() => this.visualizeAA()}
         >
           Visualize A* Algorithm
         </button>

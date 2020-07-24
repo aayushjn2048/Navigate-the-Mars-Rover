@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Node from "./Node/Node";
 import "./PathFinder.css";
 import { djikstra, getNodesInShortestPathOrder } from "../algorithms/djikstra";
+import { bfs } from "../algorithms/bfs";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Home } from "./components/Home";
@@ -9,6 +10,7 @@ import { Navigation } from "./components/Navigation";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Dj from "./components/Djikstra";
 import { AStar } from "./components/AStar";
+import Bfs from "./components/Bfs";
 const SNrow = 10;
 const SNcol = 15;
 const FINrow = 10;
@@ -89,6 +91,30 @@ class PathFinder extends Component {
     }
   }
 
+  animateBfs(visnodesinorder = [], nodesInShortestPath = []) {
+    for (let i = 0; i <= visnodesinorder.length; i++) {
+      //making a copy of the grid state
+      if (i === visnodesinorder.length) {
+        setTimeout(() => {
+          this.animateShortestpath(nodesInShortestPath);
+        }, 10 * i);
+        return;
+      }
+      setTimeout(() => {
+        const node = visnodesinorder[i];
+        // const newgrid = this.state.grid.slice();
+        // const newNode = {
+        //   ...current,
+        //   isVisited: true,
+        // };
+        if (!node.isStart && !node.isFinish && !node.isWall) {
+          document.getElementById(`node-${node.r}-${node.c}`).className =
+            "node nodevisited";
+        }
+      }, 10 * i);
+    }
+  }
+
   visualizeDjikstra() {
     const { grid } = this.state;
     const start = grid[SNrow][SNcol];
@@ -99,6 +125,20 @@ class PathFinder extends Component {
     // console.log(visitedNodes);
     console.log(nodesInShortestPathOrder);
     this.animateDjikstra(visitedNodes, nodesInShortestPathOrder);
+  }
+
+  visualizeBFS() {
+    const { grid } = this.state;
+    const start = grid[SNrow][SNcol];
+    const finish = grid[FINrow][FINcol];
+    var visitedNodes = [],
+      nodesInShortestPath = [];
+    [visitedNodes, nodesInShortestPath] = bfs(grid, start, finish);
+    //backtracking from final node to get start node,tracing path
+    // const nodesInShortestPath = backtrace(finish);
+    // console.log(visitedNodes);
+    // console.log(nodesInShortestPath);
+    this.animateBfs(visitedNodes, nodesInShortestPath);
   }
 
   render() {
@@ -128,6 +168,17 @@ class PathFinder extends Component {
                   />
                 )}
               />
+              <Route
+                exact
+                path="/bfs"
+                component={() => (
+                  <Bfs
+                    func={() => {
+                      this.visualizeBFS();
+                    }}
+                  />
+                )}
+              />
               <Route path="/aStar" component={AStar} exact />
             </Switch>
           </div>
@@ -138,7 +189,15 @@ class PathFinder extends Component {
             return (
               <div key={rowidx}>
                 {row.map((node, nodeidx) => {
-                  const { r, c, isStart, isFinish, isVisited, isWall } = node;
+                  const {
+                    r,
+                    c,
+                    isStart,
+                    isFinish,
+                    isVisited,
+                    isWall,
+                    parent,
+                  } = node;
                   return (
                     <Node
                       key={nodeidx}
@@ -147,6 +206,7 @@ class PathFinder extends Component {
                       isStart={isStart}
                       isVisited={isVisited}
                       isWall={isWall}
+                      parent={parent}
                       mouseispressed={mouseispressed}
                       onMouseDown={(r, c) => this.handleMouseDown(r, c)}
                       onMouseEnter={(r, c) => this.handleMouseEnter(r, c)}
@@ -177,6 +237,7 @@ const createNode = (c, r) => {
     isVisited: false,
     isWall: false,
     previousnode: null,
+    parent: null,
   };
 };
 
