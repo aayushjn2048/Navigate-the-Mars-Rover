@@ -300,9 +300,9 @@ const createNode = (c, r) => {
 
 const getInitialGRID = () => {
   const grid = [];
-  for (let r = 0; r < 20; r++) {
+  for (let r = 0; r < window.innerHeight / 30; r++) {
     const currrow = [];
-    for (let c = 0; c < 50; c++) {
+    for (let c = 0; c < window.innerWidth / 30; c++) {
       currrow.push(createNode(c, r));
     }
     grid.push(currrow);
