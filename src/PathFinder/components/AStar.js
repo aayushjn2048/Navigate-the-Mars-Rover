@@ -1,6 +1,6 @@
 import React from "react";
 
-const Astar = (props) => {
+const As = (props) => {
   console.log(props.func);
   return (
     <div className="mt-3 d-flex justify-content-center">
@@ -9,7 +9,7 @@ const Astar = (props) => {
         class="btn btn-success"
         onClick={() => props.func()}
       >
-        Visualize A* Algorithm
+        Visualize A Star Algorithm
       </button>
       <span>&nbsp;</span>
       <button
@@ -24,4 +24,4 @@ const Astar = (props) => {
   );
 };
 
-export default Astar;
+export default As;
